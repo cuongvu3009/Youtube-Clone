@@ -9,12 +9,13 @@ const {
   like,
   dislike,
 } = require('../controllers/user');
+const verifyToken = require('../utils/verifyToken');
 
 //update user
-router.put('/:id', update);
+router.put('/:id', verifyToken, update);
 
 //delete user
-router.delete('/:id', deleteUser);
+router.delete('/:id', verifyToken, deleteUser);
 
 //get a user
 router.get('/find/:id', getUser);
