@@ -1,17 +1,43 @@
+const createError = require('../error');
+const Video = require('../models/Video');
+
 const addVideo = async (req, res) => {
-  res.send('addVideo');
+  const newVideo = await Video.create({ userId: req.user.id, ...req.body });
+  res.status(201).json(newVideo);
 };
 
-const updateVideo = async (req, res) => {
-  res.send('updateVideo');
+const updateVideo = async (req, res, next) => {
+  const video = await Video.findById(req.params.id);
+  if (!video) {
+    return next(createError(404, `No video with ${req.params.id} found!`));
+  }
+  if (req.user.id === video.userId) {
+    const updatedVideo = await Video.findByIdAndUpdate(
+      req.params.id,
+      { $set: req.body },
+      { new: true }
+    );
+    res.status(200).json(updatedVideo);
+  } else {
+    return next(createError(403, `You can only update your video!`));
+  }
 };
 
 const deleteVideo = async (req, res) => {
-  res.send('deleteVideo');
+  const video = await Video.findById(req.params.id);
+  if (!video)
+    return next(createError(404, `No video with ${req.params.id} found!`));
+  if (req.user.id === video.userId) {
+    const deletedVideo = await Video.findByIdAndDelete(req.params.id);
+    res.status(200).json(deletedVideo);
+  } else {
+    return next(createError(403, `You can only delete your video!`));
+  }
 };
 
 const getVideo = async (req, res) => {
-  res.send('getVideo');
+  const video = await Video.findById(req.params.id);
+  res.status(200).json(video);
 };
 
 const addView = async (req, res) => {

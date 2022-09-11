@@ -25,15 +25,30 @@ const deleteUser = async (req, res) => {
 };
 
 const getUser = async (req, res) => {
-  res.send('getUser');
+  const user = await User.findById(req.params.id);
+  res.status(200).json(user);
 };
 
 const subscribe = async (req, res) => {
-  res.send('subscribe');
+  await User.findByIdAndUpdate(req.user.id, {
+    $push: { subscribedUsers: req.params.id },
+  });
+  await User.findByIdAndUpdate(req.params.id, {
+    $push: { subscribers: req.user.id },
+  });
+
+  res.status(200).json('Subcribed!');
 };
 
 const unsubscribe = async (req, res) => {
-  res.send('unsubscribe');
+  await User.findByIdAndUpdate(req.user.id, {
+    $pull: { subscribedUsers: req.params.id },
+  });
+  await User.findByIdAndUpdate(req.params.id, {
+    $pull: { subscribers: req.user.id },
+  });
+
+  res.status(200).json('Unsubcribed!');
 };
 
 const like = async (req, res) => {

@@ -13,15 +13,16 @@ const {
   sub,
   search,
 } = require('../controllers/video');
+const verifyToken = require('../utils/verifyToken');
 
 //create a video, need token
-router.post('/', addVideo);
+router.post('/', verifyToken, addVideo);
 
 //update a video, need token
-router.put('/:id', updateVideo);
+router.put('/:id', verifyToken, updateVideo);
 
 //delete a video, need token
-router.delete('/:id', deleteVideo);
+router.delete('/:id', verifyToken, deleteVideo);
 
 //get video
 router.get('/find/:id', getVideo);
@@ -36,7 +37,7 @@ router.get('/trend', trend);
 router.get('/random', random);
 
 //create a video, need token
-router.get('/sub', sub);
+router.get('/sub', verifyToken, sub);
 
 //get by tag
 router.get('/tags', getByTag);
