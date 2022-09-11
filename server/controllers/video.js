@@ -1,5 +1,6 @@
 const createError = require('../error');
 const Video = require('../models/Video');
+const User = require('../models/User');
 
 const addVideo = async (req, res) => {
   const newVideo = await Video.create({ userId: req.user.id, ...req.body });
@@ -41,19 +42,35 @@ const getVideo = async (req, res) => {
 };
 
 const addView = async (req, res) => {
+  const video = await Video.findById(req.params.id);
+  if (!video)
+    return next(createError(404, `No video with ${req.params.id} found!`));
+  await Video.findByIdAndUpdate(req.params.id, { $inc: { views: 1 } });
   res.send('addView');
 };
 
 const random = async (req, res) => {
-  res.send('random');
+  const randomVideos = await Video.aggregate([{ $sample: { size: 50 } }]);
+  res.status(200).json(randomVideos);
 };
 
 const trend = async (req, res) => {
-  res.send('trend');
+  //	If views: 1 (then it will return lowest views videos), if view: -1 then it will return highest views videos
+  const trendVideos = await Video.find().sort({ views: -1 });
+  res.status(200).json(trendVideos);
 };
 
 const sub = async (req, res) => {
-  res.send('sub');
+  const user = await User.findById(req.user.id);
+  const subcribedChannels = await user.subscribedUsers;
+
+  const list = await Promise.all(
+    subcribedChannels.map((channelId) => {
+      return Video.find({ userId: channelId });
+    })
+  );
+  //	add .flat() to remove 1 layer array bracket
+  res.status(200).json(list.flat().sort((a, b) => b.createdAt - a.createdAt));
 };
 
 const getByTag = async (req, res) => {
