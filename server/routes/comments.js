@@ -6,12 +6,13 @@ const {
   deleteComment,
   getComments,
 } = require('../controllers/comment');
+const verifyToken = require('../utils/verifyToken');
 
 //token
-router.post('/', addComment);
+router.post('/', verifyToken, addComment);
 
 //token
-router.delete('/:id', deleteComment);
+router.delete('/:id', verifyToken, deleteComment);
 
 router.get('/:videoId', getComments);
 
