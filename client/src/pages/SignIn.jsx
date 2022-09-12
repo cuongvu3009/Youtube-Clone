@@ -107,26 +107,32 @@ const SignIn = () => {
     }
   };
 
-  const handleSiginGoogle = async () => {
+  const signInWithGoogle = async () => {
     dispatch(loginStart());
     signInWithPopup(auth, provider)
-      .then((result) =>
+      .then((result) => {
         axios
-          .post('auth/google', {
+          .post('/auth/google', {
             name: result.user.displayName,
             email: result.user.email,
             img: result.user.photoURL,
           })
-          .then((res) => dispatch(loginSuccess(res.data)))
-      )
-      .catch((error) => dispatch(loginFailure()));
+          .then((res) => {
+            console.log(res);
+            dispatch(loginSuccess(res.data));
+            navigate('/');
+          });
+      })
+      .catch((error) => {
+        dispatch(loginFailure());
+      });
   };
 
   return (
     <Container>
       <Wrapper>
         <Title>Sign in</Title>
-        <SubTitle>to continue to LamaTube</SubTitle>
+        <SubTitle>to continue to ZooTube</SubTitle>
         <Input placeholder='email' onChange={(e) => setEmail(e.target.value)} />
         <Input
           type='password'
@@ -136,7 +142,7 @@ const SignIn = () => {
         <Button onClick={handleLogin}>Sign in</Button>
 
         <Title>or</Title>
-        <Button onClick={handleSiginGoogle}>
+        <Button onClick={signInWithGoogle}>
           <p>Sign In with Google</p>
         </Button>
         <Title>or</Title>

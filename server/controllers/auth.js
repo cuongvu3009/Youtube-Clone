@@ -8,8 +8,10 @@ const signUp = async (req, res, next) => {
   if (!name || !email || !password) {
     return next(createError(404, 'Please provide name, email and password'));
   }
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(password, salt);
 
-  const user = await User.create(req.body);
+  const user = await User.create({ ...req.body, password: hashedPassword });
   res.status(201).json(user);
 };
 
@@ -42,8 +44,30 @@ const signIn = async (req, res, next) => {
     .json(other);
 };
 
-const googleAuth = async (req, res) => {
-  res.send('googleAuth');
+const googleAuth = async (req, res, next) => {
+  try {
+    const user = await User.findOne({ email: req.body.email });
+    if (user) {
+      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+      res
+        .cookie('access_token', token, { httpOnly: true })
+        .status(200)
+        .json(user._doc);
+    } else {
+      const newUser = new User({
+        ...req.body,
+        fromGoogle: true,
+      });
+      const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
+      const savedUser = newUser.save();
+      res
+        .cookie('access_token', token, { httpOnly: true })
+        .status(200)
+        .json(savedUser._doc);
+    }
+  } catch (error) {
+    return next(createError(500, 'Something went wrong, try again!'));
+  }
 };
 
 module.exports = { signIn, signUp, googleAuth };
