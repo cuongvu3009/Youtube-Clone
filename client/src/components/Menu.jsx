@@ -11,7 +11,7 @@ import SportsBasketballOutlinedIcon from '@mui/icons-material/SportsBasketballOu
 import MovieOutlinedIcon from '@mui/icons-material/MovieOutlined';
 import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
 import LiveTvOutlinedIcon from '@mui/icons-material/LiveTvOutlined';
-import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
+import YouTubeIcon from '@mui/icons-material/YouTube';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import FlagOutlinedIcon from '@mui/icons-material/FlagOutlined';
 import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
@@ -35,6 +35,7 @@ const Logo = styled.div`
   gap: 5px;
   font-weight: bold;
   margin-bottom: 25px;
+  font-size: 1.5rem;
 `;
 
 const Img = styled.img`
@@ -84,7 +85,10 @@ const Menu = ({ darkMode, setDarkMode }) => {
     <Container>
       <Wrapper>
         <Link to='/' style={{ textDecoration: 'none', color: 'inherit' }}>
-          <Logo>LamaTube</Logo>
+          <Logo>
+            <YouTubeIcon style={{ color: 'red', fontSize: '50px' }} />
+            ZOOTUBE
+          </Logo>
         </Link>
         <Link to='random' style={{ textDecoration: 'none', color: 'inherit' }}>
           <Item>
@@ -116,18 +120,9 @@ const Menu = ({ darkMode, setDarkMode }) => {
           <HistoryOutlinedIcon />
           History
         </Item>
+
         <Hr />
-        <Login>
-          Sign in to like videos, comment, and subscribe.
-          <Link to='signin' style={{ textDecoration: 'none' }}>
-            <Button>
-              <AccountCircleOutlinedIcon />
-              SIGN IN
-            </Button>
-          </Link>
-        </Login>
-        <Hr />
-        <Title>BEST OF LAMATUBE</Title>
+        <Title>BEST OF YOUTUBE</Title>
         <Item>
           <LibraryMusicOutlinedIcon />
           Music
