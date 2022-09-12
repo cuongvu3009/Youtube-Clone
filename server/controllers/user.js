@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const Video = require('../models/Video');
 
 const update = async (req, res) => {
   const { id } = req.params;
@@ -52,11 +53,23 @@ const unsubscribe = async (req, res) => {
 };
 
 const like = async (req, res) => {
-  res.send('like');
+  const userId = await req.user.id;
+  const videoId = await req.params.videoId;
+  await Video.findByIdAndUpdate(videoId, {
+    $addToSet: { likes: userId },
+    $pull: { dislikes: userId },
+  });
+  res.status(201).json('liked!');
 };
 
 const dislike = async (req, res) => {
-  res.send('dislike');
+  const userId = await req.user.id;
+  const videoId = await req.params.videoId;
+  await Video.findByIdAndUpdate(videoId, {
+    $addToSet: { dislikes: userId },
+    $pull: { likes: userId },
+  });
+  res.status(201).json('disliked!');
 };
 
 module.exports = {
