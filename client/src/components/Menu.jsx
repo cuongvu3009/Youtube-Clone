@@ -16,7 +16,10 @@ import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import FlagOutlinedIcon from '@mui/icons-material/FlagOutlined';
 import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
 import SettingsBrightnessOutlinedIcon from '@mui/icons-material/SettingsBrightnessOutlined';
+import { useSelector, useDispatch } from 'react-redux';
+
 import { Link } from 'react-router-dom';
+import { logout } from '../redux/userSlice';
 const Container = styled.div`
   flex: 1;
   background-color: ${({ theme }) => theme.bgLighter};
@@ -81,6 +84,9 @@ const Title = styled.h2`
 `;
 
 const Menu = ({ darkMode, setDarkMode }) => {
+  const { currentUser } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+
   return (
     <Container>
       <Wrapper>
@@ -164,6 +170,9 @@ const Menu = ({ darkMode, setDarkMode }) => {
           <SettingsBrightnessOutlinedIcon />
           {darkMode ? 'Light' : 'Dark'} Mode
         </Item>
+        {!currentUser ? null : (
+          <Button onClick={() => dispatch(logout())}>SIGN OUT</Button>
+        )}
       </Wrapper>
     </Container>
   );
