@@ -86,18 +86,27 @@ const Menu = ({ darkMode, setDarkMode }) => {
         <Link to='/' style={{ textDecoration: 'none', color: 'inherit' }}>
           <Logo>LamaTube</Logo>
         </Link>
-        <Item>
-          <HomeIcon />
-          Home
-        </Item>
-        <Item>
-          <ExploreOutlinedIcon />
-          Explore
-        </Item>
-        <Item>
-          <SubscriptionsOutlinedIcon />
-          Subscriptions
-        </Item>
+        <Link to='random' style={{ textDecoration: 'none', color: 'inherit' }}>
+          <Item>
+            <HomeIcon />
+            Home
+          </Item>
+        </Link>
+        <Link
+          to='subscriptions'
+          style={{ textDecoration: 'none', color: 'inherit' }}
+        >
+          <Item>
+            <ExploreOutlinedIcon />
+            Trending
+          </Item>
+        </Link>
+        <Link to='trends' style={{ textDecoration: 'none', color: 'inherit' }}>
+          <Item>
+            <SubscriptionsOutlinedIcon />
+            Subscriptions
+          </Item>
+        </Link>
         <Hr />
         <Item>
           <VideoLibraryOutlinedIcon />
