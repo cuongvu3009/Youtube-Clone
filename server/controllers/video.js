@@ -74,11 +74,18 @@ const sub = async (req, res) => {
 };
 
 const getByTag = async (req, res) => {
-  res.send('getByTag');
+  const tags = req.query.tags.split(',');
+  //loop inside tags, and search inside ($in) of tags to see if tags exist
+  const videos = await Video.find({ tags: { $in: tags } }).litmit(50);
+  res.status(200).json(videos);
 };
 
 const search = async (req, res) => {
-  res.send('search');
+  const query = req.query.query;
+  const videos = await Video.find({
+    title: { $regex: query, $options: 'i' },
+  });
+  res.status(200).json(videos);
 };
 
 module.exports = {
