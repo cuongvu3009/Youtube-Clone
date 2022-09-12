@@ -73,6 +73,22 @@ const SignIn = () => {
     e.preventDefault();
     try {
       const res = await axios.post('auth/signin', { email, password });
+      setName('');
+      setEmail('');
+      setPassword('');
+      console.log(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleSignup = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post('auth/signup', { name, email, password });
+      setName('');
+      setEmail('');
+      setPassword('');
       console.log(res.data);
     } catch (error) {
       console.log(error);
@@ -104,7 +120,7 @@ const SignIn = () => {
           placeholder='password'
           onChange={(e) => setPassword(e.target.value)}
         />
-        <Button>Sign up</Button>
+        <Button onClick={handleSignup}>Sign up</Button>
       </Wrapper>
       <More>
         English(USA)
