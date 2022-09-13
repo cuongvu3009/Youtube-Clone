@@ -10,7 +10,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { format } from 'timeago.js';
-
+import { fetchSuccess, like, dislike } from '../redux/videoSlice';
+import { subscription } from '../redux/userSlice';
+import ThumbDownIcon from '@mui/icons-material/ThumbDown';
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+import CheckCircleOutlinedIcon from '@mui/icons-material/CheckCircleOutlined';
 const Container = styled.div`
   display: flex;
   gap: 24px;
@@ -108,57 +112,78 @@ const Subscribe = styled.button`
   cursor: pointer;
 `;
 
+const VideoFrame = styled.video`
+  max-height: 720px;
+  width: 100%;
+  object-fit: cover;
+`;
+
 const Video = () => {
   const { currentUser } = useSelector((state) => state.user);
+  const { currentVideo } = useSelector((state) => state.video);
   const dispatch = useDispatch();
-  const path = useLocation().pathname.split('/')[2];
-
-  const [video, setVideo] = useState({});
   const [channel, setChannel] = useState({});
 
+  const path = useLocation().pathname.split('/')[2];
+  console.log(currentVideo);
+
   useEffect(() => {
-    const fetchVideo = async () => {
+    const fetchData = async () => {
       try {
         const videoRes = await axios.get(`/videos/find/${path}`);
         const channelRes = await axios.get(
           `/users/find/${videoRes.data.userId}`
         );
-        setVideo(videoRes.data);
         setChannel(channelRes.data);
-      } catch (error) {
-        console.log(error);
-      }
+        dispatch(fetchSuccess(videoRes.data));
+      } catch (err) {}
     };
-    fetchVideo();
-  }, [path]);
+    fetchData();
+  }, [path, dispatch]);
 
-  console.log(channel);
+  const handleLike = async () => {
+    await axios.put(`/users/like/${currentVideo._id}`);
+    dispatch(like(currentUser._id));
+  };
+  const handleDislike = async () => {
+    await axios.put(`/users/dislike/${currentVideo._id}`);
+    dispatch(dislike(currentUser._id));
+  };
+
+  const handleSub = async () => {
+    currentUser.subscribedUsers.includes(channel._id)
+      ? await axios.put(`/users/unsub/${channel._id}`)
+      : await axios.put(`/users/sub/${channel._id}`);
+    dispatch(subscription(channel._id));
+  };
 
   return (
     <Container>
       <Content>
         <VideoWrapper>
-          <iframe
-            width='100%'
-            height='720'
-            src='https://www.youtube.com/embed/k3Vfj-e1Ma4'
-            title='YouTube video player'
-            frameborder='0'
-            allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
-            allowfullscreen
-          ></iframe>
+          <VideoFrame src={currentVideo.videoUrl} controls />
         </VideoWrapper>
-        <Title>{video.title}</Title>
+        <Title>{currentVideo.title}</Title>
         <Details>
           <Info>
-            {video.views} views • {format(video.createdAt)}
+            {currentVideo.views} views • {format(currentVideo.createdAt)}
           </Info>
           <Buttons>
-            <Button>
-              <ThumbUpOutlinedIcon /> {video.likes?.length || 0}
+            <Button onClick={handleLike}>
+              {currentVideo.likes?.includes(currentUser?._id) ? (
+                <ThumbUpIcon />
+              ) : (
+                <ThumbUpOutlinedIcon />
+              )}{' '}
+              {currentVideo.likes?.length || 0}
             </Button>
-            <Button>
-              <ThumbDownOffAltOutlinedIcon /> {video.disliked?.length || 0}
+            <Button onClick={handleDislike}>
+              {currentVideo.dislikes?.includes(currentUser?._id) ? (
+                <ThumbDownIcon />
+              ) : (
+                <ThumbDownOffAltOutlinedIcon />
+              )}
+              {currentVideo.dislikes?.length || 0}
             </Button>
             <Button>
               <ReplyOutlinedIcon /> Share
@@ -177,10 +202,16 @@ const Video = () => {
               <ChannelCounter>
                 {channel.subscribers?.length || 0} subscribers
               </ChannelCounter>
-              <Description>{video.desc}</Description>
+              <Description>{currentVideo.desc}</Description>
             </ChannelDetail>
           </ChannelInfo>
-          <Subscribe>SUBSCRIBE</Subscribe>
+          <Subscribe onClick={handleSub}>
+            {currentUser.subscribedUsers?.includes(channel._id) ? (
+              <CheckCircleOutlinedIcon />
+            ) : (
+              'SUBSCRIBE'
+            )}
+          </Subscribe>
         </Channel>
         <Hr />
         <Comments />
