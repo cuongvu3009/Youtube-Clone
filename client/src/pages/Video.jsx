@@ -155,6 +155,9 @@ const Video = () => {
       : await axios.put(`/users/sub/${channel._id}`);
     dispatch(subscription(channel._id));
   };
+  if (!currentVideo) {
+    return <h3>No Video</h3>;
+  }
 
   return (
     <Container>

@@ -50,8 +50,8 @@ const addView = async (req, res) => {
 };
 
 const random = async (req, res) => {
-  const randomVideos = await Video.aggregate([{ $sample: { size: 50 } }]);
-  res.status(200).json(randomVideos);
+  const videos = await Video.find();
+  res.status(200).json(videos);
 };
 
 const trend = async (req, res) => {

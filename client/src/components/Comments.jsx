@@ -25,14 +25,14 @@ const Input = styled.input`
   background-color: transparent;
   outline: none;
   padding: 10px;
-  padding-right: 100px;
+
   width: 100%;
 `;
 const Button = styled.button`
   background-color: #1897;
   color: #fff;
   cursor: pointer;
-  width: 50%;
+  padding: 20px;
 `;
 
 const Comments = ({ videoId }) => {
@@ -67,14 +67,12 @@ const Comments = ({ videoId }) => {
     <Container>
       <NewComment>
         <Avatar src={currentUser?.img} />
-        <div style={{ display: 'flex' }}>
-          <Input
-            placeholder='Add a comment...'
-            value={desc}
-            onChange={(e) => setDesc(e.target.value)}
-          />
-          <Button onClick={handleComment}>Send</Button>{' '}
-        </div>
+        <Input
+          placeholder='Add a comment...'
+          value={desc}
+          onChange={(e) => setDesc(e.target.value)}
+        />
+        <Button onClick={handleComment}>Send</Button>{' '}
       </NewComment>
       {comments.map((comment) => (
         <Comment key={comment._id} comment={comment} />
