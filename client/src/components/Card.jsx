@@ -54,7 +54,7 @@ const Info = styled.div`
 `;
 
 const Card = ({ type, video }) => {
-  const { title, desc, imgUrl, views, createdAt } = video;
+  const { _id: id, title, desc, imgUrl, views, createdAt } = video;
   const [channel, setChannel] = useState({});
 
   useEffect(() => {
@@ -66,7 +66,7 @@ const Card = ({ type, video }) => {
   }, [video.userId]);
 
   return (
-    <Link to='/video/test' style={{ textDecoration: 'none' }}>
+    <Link to={`/video/${id}`} style={{ textDecoration: 'none' }}>
       <Container type={type}>
         <Image type={type} src={imgUrl} />
         <Details type={type}>
