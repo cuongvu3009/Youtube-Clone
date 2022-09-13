@@ -24,7 +24,7 @@ const deleteComment = async (req, res) => {
 
 const getComments = async (req, res) => {
   const comments = await Comment.find({ videoId: req.params.videoId });
-  res.status(200).json(comments);
+  res.status(200).json(comments.sort((a, b) => b.createdAt - a.createdAt));
 };
 
 module.exports = { addComment, deleteComment, getComments };

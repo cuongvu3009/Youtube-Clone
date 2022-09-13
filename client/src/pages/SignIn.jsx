@@ -101,7 +101,10 @@ const SignIn = () => {
       setName('');
       setEmail('');
       setPassword('');
-      console.log(res.data);
+      dispatch(loginSuccess(res.data));
+      setTimeout(() => {
+        navigate('/');
+      }, 200);
     } catch (error) {
       console.log(error);
     }

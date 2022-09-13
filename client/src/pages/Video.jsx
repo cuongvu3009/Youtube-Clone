@@ -1,20 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
 import ThumbDownOffAltOutlinedIcon from '@mui/icons-material/ThumbDownOffAltOutlined';
 import ReplyOutlinedIcon from '@mui/icons-material/ReplyOutlined';
 import AddTaskOutlinedIcon from '@mui/icons-material/AddTaskOutlined';
+import ThumbDownIcon from '@mui/icons-material/ThumbDown';
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import Comments from '../components/Comments';
 import Card from '../components/Card';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
+import { dislike, fetchSuccess, like } from '../redux/videoSlice';
 import { format } from 'timeago.js';
-import { fetchSuccess, like, dislike } from '../redux/videoSlice';
 import { subscription } from '../redux/userSlice';
-import ThumbDownIcon from '@mui/icons-material/ThumbDown';
-import ThumbUpIcon from '@mui/icons-material/ThumbUp';
-import CheckCircleOutlinedIcon from '@mui/icons-material/CheckCircleOutlined';
+import Recommendation from '../components/Recommendation';
+import DoneOutlineOutlinedIcon from '@mui/icons-material/DoneOutlineOutlined';
+
 const Container = styled.div`
   display: flex;
   gap: 24px;
@@ -61,9 +63,6 @@ const Hr = styled.hr`
   border: 0.5px solid ${({ theme }) => theme.soft};
 `;
 
-const Recommendation = styled.div`
-  flex: 2;
-`;
 const Channel = styled.div`
   display: flex;
   justify-content: space-between;
@@ -122,10 +121,10 @@ const Video = () => {
   const { currentUser } = useSelector((state) => state.user);
   const { currentVideo } = useSelector((state) => state.video);
   const dispatch = useDispatch();
-  const [channel, setChannel] = useState({});
 
   const path = useLocation().pathname.split('/')[2];
-  console.log(currentVideo);
+
+  const [channel, setChannel] = useState({});
 
   useEffect(() => {
     const fetchData = async () => {
@@ -174,16 +173,16 @@ const Video = () => {
                 <ThumbUpIcon />
               ) : (
                 <ThumbUpOutlinedIcon />
-              )}{' '}
-              {currentVideo.likes?.length || 0}
+              )}
+              {currentVideo.likes?.length}
             </Button>
             <Button onClick={handleDislike}>
               {currentVideo.dislikes?.includes(currentUser?._id) ? (
                 <ThumbDownIcon />
               ) : (
                 <ThumbDownOffAltOutlinedIcon />
-              )}
-              {currentVideo.dislikes?.length || 0}
+              )}{' '}
+              Dislike
             </Button>
             <Button>
               <ReplyOutlinedIcon /> Share
@@ -196,41 +195,29 @@ const Video = () => {
         <Hr />
         <Channel>
           <ChannelInfo>
-            <Image src='https://yt3.ggpht.com/yti/APfAmoE-Q0ZLJ4vk3vqmV4Kwp0sbrjxLyB8Q4ZgNsiRH=s88-c-k-c0x00ffffff-no-rj-mo' />
+            <Image src={channel.img} />
             <ChannelDetail>
               <ChannelName>{channel.name}</ChannelName>
               <ChannelCounter>
-                {channel.subscribers?.length || 0} subscribers
+                {channel.subscribers?.length} subscribers
               </ChannelCounter>
               <Description>{currentVideo.desc}</Description>
             </ChannelDetail>
           </ChannelInfo>
-          <Subscribe onClick={handleSub}>
-            {currentUser.subscribedUsers?.includes(channel._id) ? (
-              <CheckCircleOutlinedIcon />
-            ) : (
-              'SUBSCRIBE'
-            )}
-          </Subscribe>
+          {currentUser && (
+            <Subscribe onClick={handleSub}>
+              {currentUser.subscribedUsers?.includes(channel._id) ? (
+                <DoneOutlineOutlinedIcon />
+              ) : (
+                'SUBSCRIBE'
+              )}
+            </Subscribe>
+          )}
         </Channel>
         <Hr />
-        <Comments />
+        <Comments videoId={currentVideo._id} />
       </Content>
-      {/* <Recommendation>
-        <Card type='sm' />
-        <Card type='sm' />
-        <Card type='sm' />
-        <Card type='sm' />
-        <Card type='sm' />
-        <Card type='sm' />
-        <Card type='sm' />
-        <Card type='sm' />
-        <Card type='sm' />
-        <Card type='sm' />
-        <Card type='sm' />
-        <Card type='sm' />
-        <Card type='sm' />
-      </Recommendation> */}
+      <Recommendation tags={currentVideo.tags} />
     </Container>
   );
 };
