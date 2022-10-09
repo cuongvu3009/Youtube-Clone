@@ -1,5 +1,5 @@
 import axios from 'axios';
 
 export const axiosInstance = axios.create({
-  baseURL: 'https://real-erin-viper-fez.cyclic.app/api/v1/',
+  baseURL: 'https://joyous-cod-wig.cyclic.app/api/v1/',
 });
